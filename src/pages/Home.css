@@ -1,0 +1,63 @@
+
+.block {
+    text-align: left; 
+    padding-left: 15px; 
+  }
+  
+
+  .banner .container {
+    display: flex;
+    align-items: center; 
+    justify-content: flex-start; 
+    height: 100%; 
+  }
+
+  .banner {
+    position: relative; /* or absolute */
+    z-index: 10;
+  }
+  
+  .feature-cards {
+    position: relative; /* or absolute */
+    z-index: 5;
+  }
+
+  .feature-cards {
+    margin-top: 20px; /* adjust as needed */
+  }
+  
+  @keyframes fillColor {
+    from {
+      background: #fff; 
+    }
+    to {
+      background: #223a66;
+    }
+  }
+  
+  .feature-item {
+    position: relative; /* Ensure z-index works */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    transform: scale(1);
+    z-index: 1; /* Default z-index */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background: #fff; /* Default background color */
+    overflow: hidden; /* Ensures content stays within bounds */
+  }
+  
+  .feature-item:hover {
+    transform: scale(1.1);
+    z-index: 10; /* Higher z-index to overlap other cards */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    animation: fillColor 0.5s forwards; /* Apply animation */
+  }
+  
+  /* Change text and icon color to white on hover */
+  .feature-item:hover .feature-icon i,
+  .feature-item:hover span,
+  .feature-item:hover h4,
+  .feature-item:hover p,
+  .feature-item:hover a {
+    color: #fff; /* White color for text and icons */
+  }
+  

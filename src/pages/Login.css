@@ -1,0 +1,77 @@
+/* Enlarge the container width and adjust padding */
+.login-container {
+  width: 500px; /* Increased width */
+  margin: 100px auto;
+  padding: 40px; /* Increased padding */
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Adjust input group spacing and font sizes */
+.input-group {
+  margin-bottom: 25px; /* Increased margin */
+  text-align: left;
+  
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 8px; /* Increased spacing between label and input */
+  font-weight: bold;
+  font-size: 16px; /* Increased font size */
+}
+
+.input-group input {
+
+  width: 100%;
+  padding: 12px; /* Increased padding for inputs */
+  margin-top: 5px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 50px;
+  font-size: 16px; 
+}
+/* Error message styling */
+.error-message {
+  color: red;
+  margin-bottom: 20px; 
+  font-size: 15px; 
+}
+
+/* Button adjustments */
+.login-button {
+  width: 100%;
+  padding: 14px; /* Increased padding for the button */
+  margin-top: 15px;
+  background-color: #e12454;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 18px; /* Increased font size */
+}
+
+.login-button:hover {
+  background-color: #434190;
+}
+
+/* Styling for additional links */
+.additional-links {
+  margin-top: 20px; /* Increased margin */
+}
+
+.additional-links a {
+  display: inline-block;
+  margin: 15px; /* Increased margin between links */
+  font-size: 16px; /* Increased font size */
+  color: #5a67d8;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.additional-links a:hover {
+  text-decoration: underline;
+}
