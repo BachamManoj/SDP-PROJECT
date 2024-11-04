@@ -1,0 +1,24 @@
+/* PatientMain.css */
+.navbar-container {
+    width: 100%; /* Full width */
+    background-color: #5a67d8; /* Attractive color */
+    position: fixed; /* Fix to the top */
+    top: 0; /* Align to the top */
+    left: 0; /* Align to the left */
+    z-index: 1000; /* Ensure it stays above other content */
+    height: 60px; /* Set a fixed height for the navbar */
+}
+
+.navbar {
+    display: flex; /* Use flexbox for centering */
+    justify-content: center; /* Center the title */
+    align-items: center; /* Center vertically */
+    height: 100%; /* Full height of the container */
+}
+
+.navbar-title {
+    color: white; /* Title color */
+    margin: 0; /* Remove default margin */
+    font-size: 24px; /* Font size for the title */
+    font-weight: bold; /* Bold font */
+}

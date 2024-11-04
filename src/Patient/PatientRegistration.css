@@ -1,0 +1,69 @@
+/* Enlarge the container width and adjust padding */
+.registration-form-container {
+    
+    margin: 100px auto;
+    padding: 40px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  /* Adjust input group spacing and font sizes */
+  .form-group {
+    margin-bottom: 25px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  
+  .custom-input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 50px;
+    font-size: 16px;
+  }
+  
+  /* Error message styling */
+  .alert-danger {
+    color: red;
+    margin-bottom: 20px;
+    font-size: 15px;
+  }
+  
+  /* Button adjustments */
+  .btn-primary {
+  
+    background-color: #434190;
+  }
+  
+  .btn-primary:hover {
+    background-color: #e12454;
+  }
+  
+  /* Styling for additional links */
+  .additional-links {
+    margin-top: 20px;
+  }
+  
+  .additional-links a {
+    display: inline-block;
+    margin: 15px;
+    font-size: 16px;
+    color: #5a67d8;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .additional-links a:hover {
+    text-decoration: underline;
+  }
+  

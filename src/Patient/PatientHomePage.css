@@ -1,0 +1,15 @@
+/* Add this to your CSS file, e.g., PatientHomePage.css */
+
+.patient-home-page-container {
+    display: flex; /* Use flexbox for layout */
+}
+
+.patient-home-page {
+    flex-grow: 1; /* Allow this section to take remaining space */
+    padding: 20px; /* Add padding for aesthetics */
+}
+
+/* Optional: If you want to limit the width of the sidebar */
+.sidebar {
+    width: 200px; /* Adjust as needed */
+}

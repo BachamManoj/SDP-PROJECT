@@ -1,0 +1,82 @@
+/* Overall container for the dashboard */
+.dashboard-container {
+    display: flex; /* Use flexbox for layout */
+    height: 100vh; /* Full viewport height */
+}
+
+.sidebar {
+    width: 200px; /* Set width of sidebar */
+    background-color: #f4f8fb; /* Light blue color for hospital theme */
+    border-right: 1px solid #ccc; /* Optional border for better visibility */
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    padding: 20px; /* Padding for the sidebar */
+    box-sizing: border-box; /* Include padding in width calculation */
+    position: sticky; /* Sticky position */
+    top: 0; /* Stick to the top of the viewport */
+    align-self: flex-start; /* Align to the top of the parent container */
+}
+
+
+/* Title styling */
+.dashboard-title {
+    margin: 0; /* Remove default margin */
+    font-size: 40px; /* Title font size */
+    text-align: center; /* Center the title */
+}
+
+/* Logo styling */
+.logo-container {
+    margin-bottom: 20px; /* Space below the logo */
+}
+
+.hospital-logo {
+    max-width: 150px; /* Adjust logo size */
+    height: auto;
+}
+
+/* Centering the navbar items vertically */
+.navbar-center {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    flex-grow: 1; /* Allow this section to take available space */
+    justify-content: space-between; /* Distribute space evenly */
+}
+
+/* Navbar item styling as buttons */
+.navbar-item {
+    display: block; /* Make the link behave like a block element */
+    background-color: #5a67d8; /* Blue background for buttons */
+    color: white; /* White text color */
+    text-decoration: none; /* Remove underline */
+    margin: 10px 0; /* Space between items */
+    font-size: 16px; /* Font size */
+    font-weight: bold; /* Make font bold */
+    padding: 12px; /* Padding for the button */
+    border-radius: 5px; /* Rounded corners */
+    text-align: center; /* Center text */
+    transition: background-color 0.3s; /* Smooth background color transition */
+}
+
+.navbar-item:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Adding a gap between items */
+.navbar-item:not(:last-child) {
+    margin-bottom: 10px; /* Space between items */
+}
+
+/* PatientDashboard.css */
+
+.profile-image-container {
+    text-align: center; /* Center the profile image */
+    margin: 20px 0; /* Add some margin around the image */
+}
+
+.profile-image {
+    width: 100px; /* Set a fixed width */
+    height: 100px; /* Set a fixed height */
+    border-radius: 50%; /* Make it circular */
+    object-fit: cover; /* Ensure the image covers the container */
+}

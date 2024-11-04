@@ -1,10 +1,12 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhoneAlt, faEnvelope, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import Navbar from './Navbar';
 
 export default function Contact() {
   return (
     <div>
+      <Navbar/>
       {/* Page Title Section */}
       <section className="page-title bg-1">
         <div className="overlay"></div>

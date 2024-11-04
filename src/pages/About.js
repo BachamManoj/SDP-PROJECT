@@ -1,6 +1,4 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTooth } from '@fortawesome/free-solid-svg-icons';
 import './Navbar.css';
 import about1 from '../images/about-1.jpg';
 import about2 from '../images/about-2.jpg';
@@ -17,6 +15,7 @@ import Navbar from './Navbar';
 export default function About() {
   return (
     <div>
+      <Navbar/>
       <section className="page-title bg-1">
         <div className="overlay"></div>
         <div className="container">

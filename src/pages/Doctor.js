@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, Button } from 'react-bootstrap';
+import Navbar from './Navbar';
 
 
 const doctors = [
@@ -68,6 +69,7 @@ const DoctorsBySpecialty = () => {
 
   return (
     <div className="container mt-5">
+      <Navbar/>
       <h1 className="text-center mb-4">Select a Doctor by Specialty</h1>
       
       <div className="row justify-content-center mb-4">

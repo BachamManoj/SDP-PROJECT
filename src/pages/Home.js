@@ -3,7 +3,7 @@ import './Navbar.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { NotebookPen,BriefcaseBusiness,Ambulance,FlaskConical,HeartPulse } from 'lucide-react';
+import { NotebookPen,BriefcaseBusiness,Ambulance } from 'lucide-react';
 import img1 from '../images/img-1.jpg';
 import img2 from '../images/img-2.jpg';
 import img3 from '../images/img-3.jpg';
@@ -13,10 +13,12 @@ import { faTooth ,faCrutch, faDna, faBrain ,faHeartPulse, faFlask } from '@forta
 
 
 import './Home.css'; 
+import Navbar from './Navbar';
 
 export default function Home() {
   return (
     <div>
+      <Navbar/>
       <section className="banner" style={{ marginBottom: '90px' }}>
         <div className="container">
           <div className="row">

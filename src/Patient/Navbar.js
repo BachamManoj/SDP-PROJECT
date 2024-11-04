@@ -44,15 +44,8 @@ export default function Navbar() {
               <li className="nav-item"><Link className="nav-link" to="/chat">Chating</Link></li>
             </ul>
           </div>
-          <button
-            type="button"
-            className="btn mr-md-2 mb-md-0 mb-2 btn-primary btn-round"
-            style={{ borderRadius: '25px' ,backgroundColor:'#e12454' }}
-          >
-           <Link  to="/login">Login</Link>
-          </button>
+          
         </div>
-        
       </nav>
     </header>
   );

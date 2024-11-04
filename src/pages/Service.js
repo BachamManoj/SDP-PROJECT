@@ -8,10 +8,12 @@ import service4 from '../images/service-4.jpg'
 import service6 from '../images/service-6.jpg'
 import service8 from '../images/service-8.jpg'
 import './Navbar.css';
+import Navbar from './Navbar';
 
 export default function Service() {
   return (
     <div>
+		<Navbar/>
       <section className="page-title bg-1">
         <div className="overlay"></div>
         <div className="container">
