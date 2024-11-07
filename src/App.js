@@ -17,7 +17,7 @@ import LoginPage from './Patient/Login';
 import DoctorLoginPage from './Doctor/DocterLogin';
 import PatientDashboard from './Patient/PatientDashboard';
 import PatientHomePage from './Patient/PatientHomePage';
-
+import AppointmentPatient from './Patient/Appointment';
 
 
 function App() {
@@ -35,8 +35,9 @@ function App() {
           <Route exact path='/doctor' element={<DoctorsBySpecialty/>} />
           <Route exact path='/appointment' element={<Appointment/>} />
           <Route exact path='/patientRegistration' element={<PatientRegistration/>} />
-          <Route exact path='/patientDashboard' element={<PatientDashboard/>} />\
-          <Route exact path='/patientHomepage' element={<PatientHomePage/>} />\
+          <Route exact path='/patientDashboard' element={<PatientDashboard/>} />
+          <Route exact path='/patientHomepage' element={<PatientHomePage/>} />
+          <Route exact path='/bookAppointments' element={<AppointmentPatient/>} />
           <Route exact path='/success' element={<SuccessPage />} />
           <Route exact path='/patientprofile' element={<PatientProfile />} />
           <Route exact path='/chat' element={<Chat/> } />

@@ -57,7 +57,7 @@ const PatientDashboard = () => {
                     )}
                     <div className="navbar-center">
                         <Link className="navbar-item" to="/patientHomepage">Dashboard</Link>
-                        <Link className="navbar-item" to="/myAppointments">My Appointments</Link>
+                        <Link className="navbar-item" to="/bookAppointments">Book Appointment</Link>
                         <Link className="navbar-item" to="/billing">Billing</Link>
                         <Link className="navbar-item" to="/reports">Reports</Link>
                         <Link className="navbar-item" to="/support">Support</Link>

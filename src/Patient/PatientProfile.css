@@ -1,25 +1,28 @@
 .dashboard-container {
-    display: flex; /* Use flexbox for layout */
-    height: 100vh; /* Full viewport height */
+    display: flex;
+    height: 120vh;
 }
 
 .patient-dashboard {
-    width: 250px; /* Fixed width for the sidebar */
-    background-color: #f8f9fa; /* Light background for the sidebar */
-    border-right: 1px solid #dee2e6; /* Border for visual separation */
+    width: 250px;
+    background-color: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+    position: sticky; /* Sticky positioning */
+    top: 0; /* Stick to the top of the viewport */
+    align-self: flex-start; /* Align sidebar at the start of the flex container */
+    height: 100vh; /* Full height to ensure it occupies the entire viewport */
 }
 
 .profile-content {
-    flex-grow: 1; /* Occupies the remaining space */
-    padding: 20px; /* Padding around the profile content */
-     /* Allow scrolling if content overflows */
-    background-color: #ffffff; /* Background color for the profile area */
+    flex-grow: 1;
+    padding: 40px;
+    background-color: #ffffff;
+    overflow-y: auto; /* Allow scrolling if content overflows */
 }
 
 .profile-form-container {
-    max-width: 1000px; /* Increase max width */
-    width: 90%; /* Adjust width to a higher percentage to allow more flexibility */
-    margin: auto; /* Center the form in the container */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
+    max-width: 1000px;
+    width: 100%;
+    margin: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-

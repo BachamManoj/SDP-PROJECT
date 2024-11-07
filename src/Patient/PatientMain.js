@@ -1,5 +1,5 @@
 import React from 'react';
-import './PatientMain.css'; // Import your CSS file for styling
+import './PatientMain.css'; 
 
 const PatientMain = () => {
     return (

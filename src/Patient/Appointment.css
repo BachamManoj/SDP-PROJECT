@@ -1,0 +1,30 @@
+/* Styles for the sidebar and main content */
+.appointment-container {
+    display: flex; /* Enable flexbox layout */
+}
+
+.appointment-sidebar {
+    width: 250px; /* Set a fixed width for the sidebar */
+    
+     /* Add some padding */
+   /* Optional shadow for depth */
+    height: 100vh; /* Full height for the sidebar */
+    position: relative; /* Ensure sidebar stays in position */
+}
+
+.appointment-main-content {
+    margin-top: 100px;
+    flex-grow: 1; /* Allow the main content to take up the remaining space */
+    padding: 20px; /* Add padding around the main content */
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .appointment-container {
+        flex-direction: column; /* Stack the sidebar and main content vertically on smaller screens */
+    }
+    .appointment-sidebar {
+        width: 100%; /* Full width for the sidebar on small screens */
+        height: auto; /* Auto height for sidebar on small screens */
+    }
+}
