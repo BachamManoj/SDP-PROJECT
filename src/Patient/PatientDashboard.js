@@ -45,7 +45,7 @@ const PatientDashboard = () => {
     return (
         <div>
             <PatientMain />
-            <div className="dashboard-container" style={{ marginTop: '60px' }}> {/* Adjust margin to prevent overlap with navbar */}
+            <div className="dashboard-container" style={{ marginTop: '60px' }}> 
                 <div className="sidebar">
                     <div className="logo-container">
                         <img src={logo} alt="Hospital Logo" className="hospital-logo" />
@@ -62,6 +62,8 @@ const PatientDashboard = () => {
                         <Link className="navbar-item" to="/reports">Reports</Link>
                         <Link className="navbar-item" to="/support">Support</Link>
                         <Link className="navbar-item" to="/patientprofile">My Profile</Link>
+                        <Link className="navbar-item" to="/chatpatient">Chat</Link>
+                        
                         <a className="navbar-item" href="#" onClick={handleLogout}>Logout</a> 
                     </div>
                 </div>

@@ -15,7 +15,7 @@ const PatientHomePage = () => {
                 });
                 setPatient(res.data);
 
-                const appointmentsRes = await axios.get(`http://localhost:9999/appointments/${res.data.id}`, {
+                const appointmentsRes = await axios.get(`http://localhost:9999/getappointments/${res.data.id}`, {
                     withCredentials: true,
                 });
                 setAppointments(appointmentsRes.data);
@@ -29,7 +29,7 @@ const PatientHomePage = () => {
 
     return (
         <div className="patient-home-page-container">
-            <PatientDashboard />    
+            <PatientDashboard />
             <div className="patient-home-page" style={{ marginTop: '60px' }}> {/* Adjust margin to avoid overlap */}
                 {patient && (
                     <h1>Welcome, {patient.firstName} {patient.lastName}!</h1>
@@ -40,8 +40,8 @@ const PatientHomePage = () => {
                         {appointments.map((appointment) => (
                             <li key={appointment.id}>
                                 <strong>Date:</strong> {appointment.date} | 
-                                <strong> Time:</strong> {appointment.time} | 
-                                <strong> Doctor:</strong> {appointment.doctorName}
+                                <strong> Time Slot:</strong> {appointment.timeSlot} | 
+                                <strong> Doctor:</strong> {appointment.doctor.name}
                             </li>
                         ))}
                     </ul>

@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PatientDashboard from './PatientDashboard';
-import './Appointment.css'; // Make sure to import your CSS file
+import './Appointment.css';
 
 const Appointment = () => {
-    const [doctors, setDoctors] = useState([]); 
-    const [speciality, setSpeciality] = useState(""); 
+    const [doctors, setDoctors] = useState([]);
+    const [speciality, setSpeciality] = useState("");
     const [patient, setPatient] = useState({});
-    const [selectedDoctor, setSelectedDoctor] = useState(null); 
+    const [selectedDoctor, setSelectedDoctor] = useState(null);
+    const [selectedDate, setSelectedDate] = useState("");
     const [selectedTime, setSelectedTime] = useState("");
     const [availableSlots, setAvailableSlots] = useState([]);
 
@@ -40,10 +41,10 @@ const Appointment = () => {
                 }
             });
             setDoctors(res.data);
-            setSelectedDoctor(null); 
+            setSelectedDoctor(null);
         } catch (error) {
             console.error("Error fetching doctor details:", error);
-            setDoctors([]); 
+            setDoctors([]);
         }
     };
 
@@ -72,17 +73,17 @@ const Appointment = () => {
     };
 
     const handleAppointmentSubmit = async () => {
-        if (!selectedDoctor || !selectedTime) {
-            alert("Please select both a doctor and a time slot.");
+        if (!selectedDoctor || !selectedDate || !selectedTime) {
+            alert("Please select a date, doctor, and time slot.");
             return;
         }
 
         try {
             const appointmentData = {
-                patient: patient,  // Include the patient object
-                doctor: selectedDoctor,  // Include the full doctor object
-                date: new Date().toISOString().split("T")[0], // Current date in YYYY-MM-DD format
-                timeSlot: selectedTime, // Time slot already in HH:mm format
+                patient: patient,
+                doctor: selectedDoctor,
+                date: selectedDate,
+                timeSlot: selectedTime,
             };
 
             const res = await axios.post('http://localhost:9999/makeAppointment', appointmentData);
@@ -103,62 +104,80 @@ const Appointment = () => {
         { id: 5, name: "Orthopedics" },
     ];
 
+    const todayDate = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
+
     return (
-        <div className="appointment-container">
+        <div className="appointment-container ">
             <div className="appointment-sidebar">
                 <PatientDashboard />
             </div>
             <div className="appointment-main-content">
                 <h2>Book an Appointment</h2>
-                <div className="mb-3">
-                    <label htmlFor="specialty" className="form-label">Select Specialty:</label>
-                    <select 
-                        id="specialty" 
-                        className="form-select" 
-                        value={speciality} 
-                        onChange={handleSpecialtyChange}
-                    >
-                        <option value="">Choose a specialty</option>
-                        {specialties.map((spec) => (
-                            <option key={spec.id} value={spec.name}>{spec.name}</option>
-                        ))}
-                    </select>
-                </div>
-                
-                <div className="mb-3">
-                    <label htmlFor="doctor" className="form-label">Select a Doctor:</label>
-                    <select 
-                        id="doctor" 
-                        className="form-select" 
-                        onChange={handleDoctorChange}
-                        disabled={doctors.length === 0}
-                    >
-                        <option value="">Choose a doctor</option>
-                        {doctors.map((doctor) => (
-                            <option key={doctor.id} value={doctor.id}>{doctor.name}</option>
-                        ))}
-                    </select>
+                <div className="row">
+                    <div className="col-md-6 mb-3">
+                        <label htmlFor="specialty" className="form-label">Select Specialty:</label>
+                        <select 
+                            id="specialty" 
+                            className="form-select" 
+                            value={speciality} 
+                            onChange={handleSpecialtyChange}
+                        >
+                            <option value="">Choose a specialty</option>
+                            {specialties.map((spec) => (
+                                <option key={spec.id} value={spec.name}>{spec.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    
+                    <div className="col-md-6 mb-3">
+                        <label htmlFor="doctor" className="form-label">Select a Doctor:</label>
+                        <select 
+                            id="doctor" 
+                            className="form-select" 
+                            onChange={handleDoctorChange}
+                            disabled={doctors.length === 0}
+                        >
+                            <option value="">Choose a doctor</option>
+                            {doctors.map((doctor) => (
+                                <option key={doctor.id} value={doctor.id}>{doctor.name}</option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
 
-                <div className="mb-3">
-                    <label htmlFor="timeSlot" className="form-label">Select a Time Slot:</label>
-                    <select 
-                        id="timeSlot" 
-                        className="form-select" 
-                        value={selectedTime} 
-                        onChange={(e) => setSelectedTime(e.target.value)}
-                    >
-                        <option value="">Choose a time slot</option>
-                        {availableSlots.map((slot, index) => (
-                            <option key={index} value={slot}>{slot}</option>
-                        ))}
-                    </select>
+                <div className="row">
+                    <div className="col-md-6 mb-3">
+                        <label htmlFor="date" className="form-label">Select a Date:</label>
+                        <input 
+                            type="date" 
+                            id="date" 
+                            className="form-control"
+                            min={todayDate}
+                            value={selectedDate}
+                            onChange={(e) => setSelectedDate(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="col-md-6 mb-3">
+                        <label htmlFor="timeSlot" className="form-label">Select a Time Slot:</label>
+                        <select 
+                            id="timeSlot" 
+                            className="form-select" 
+                            value={selectedTime} 
+                            onChange={(e) => setSelectedTime(e.target.value)}
+                        >
+                            <option value="">Choose a time slot</option>
+                            {availableSlots.map((slot, index) => (
+                                <option key={index} value={slot}>{slot}</option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
 
                 <button 
                     onClick={handleAppointmentSubmit} 
                     className="btn btn-primary"
-                    disabled={!selectedTime || !selectedDoctor}
+                    disabled={!selectedDate || !selectedTime || !selectedDoctor}
                 >
                     Book Appointment
                 </button>

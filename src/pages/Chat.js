@@ -17,12 +17,11 @@ const Chat = () => {
                 const res = await axios.get('http://localhost:9999/getPatientDetails', { withCredentials: true });
                 setPatientData(res.data);
                 
-                // Fetch chat history after setting patient data
                 fetch(`/chat/history?sender=${res.data.email}&receiver=User2`)
                     .then(response => response.json())
                     .then(data => setMessages(data));
 
-                // Set up WebSocket connection after fetching patient data
+                
                 const socket = new SockJS('http://localhost:9999/ws');
                 const client = Stomp.over(socket);
                 

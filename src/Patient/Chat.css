@@ -1,0 +1,92 @@
+.chat-dashboard-container {
+    display: flex;
+    height: 140vh;
+}
+
+.chat-main {
+    margin-top: 50px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.chat-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #e5ddd5;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.message-bubble {
+    max-width: 70%;
+    padding: 10px 15px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    position: relative;
+}
+
+/* Style for sent messages (aligned to the right) */
+.message-bubble.sent {
+    align-self: flex-end;
+    background-color: #dcf8c6;
+    color: #000;
+    border-top-right-radius: 0;
+}
+
+/* Style for received messages (aligned to the left) */
+.message-bubble.received {
+    align-self: flex-start;
+    background-color: #ffffff;
+    color: #000;
+    border-top-left-radius: 0;
+}
+
+/* Timestamp styling */
+.message-timestamp {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 5px;
+    text-align: right;
+}
+
+/* Input container for sending messages */
+.input-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+input[type="text"] {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 1rem;
+    outline: none;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #4caf50;
+    color: #ffffff;
+    border: none;
+    border-radius: 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
+}

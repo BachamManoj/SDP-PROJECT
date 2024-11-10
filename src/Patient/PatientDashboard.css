@@ -6,7 +6,7 @@
 
 .sidebar {
     width: 200px; /* Set width of sidebar */
-    background-color: #f4f8fb; /* Light blue color for hospital theme */
+    background-color: #f4f8fb !important; /* Light blue color for hospital theme */
     border-right: 1px solid #ccc; /* Optional border for better visibility */
     display: flex;
     flex-direction: column; /* Stack items vertically */
