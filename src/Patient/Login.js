@@ -43,7 +43,7 @@ function LoginPage() {
       }
     } catch (error) {
       console.error('Error during login:', error);
-      setErrorMessage('An error occurred during login. Please try again.');
+      setErrorMessage('Invalid email or password.. Please try again.');
     }
   };
 

@@ -5,12 +5,11 @@ import axios from 'axios';
 import PatientDashboard from './PatientDashboard';
 import './Chat.css';
 
-const Chat = () => {
+const Chat = ({ user2 }) => {
     const [patientData, setPatientData] = useState({ email: '' });
     const [messages, setMessages] = useState([]);
     const [inputMessage, setInputMessage] = useState('');
     const [stompClient, setStompClient] = useState(null);
-    const receiver = 'manojbac@gmail.com'; // The receiver's email
 
     // Fetch Patient data and chat history
     const fetchPatientData = async () => {
@@ -19,7 +18,7 @@ const Chat = () => {
             setPatientData(res.data);
 
             const response = await axios.get('http://localhost:9999/api/chat/history', {
-                params: { sender: res.data.email, receiver },
+                params: { sender: res.data.email, receiver: user2 },
                 withCredentials: true,
             });
             setMessages(response.data);
@@ -37,41 +36,40 @@ const Chat = () => {
 
         // Cleanup interval on component unmount
         return () => clearInterval(intervalId);
-    }, [receiver]);
+    }, [user2]); // Update when user2 changes
 
     // Establish WebSocket connection for real-time messaging
     useEffect(() => {
         const socket = new SockJS('http://localhost:9999/ws');
         const client = Stomp.over(socket);
-    
+
         client.connect({}, () => {
             client.subscribe(`/user/queue/messages`, (message) => {
                 const receivedMessage = JSON.parse(message.body);
                 if (
-                    (receivedMessage.sender === patientData.email && receivedMessage.receiver === receiver) ||
-                    (receivedMessage.sender === receiver && receivedMessage.receiver === patientData.email)
+                    (receivedMessage.sender === patientData.email && receivedMessage.receiver === user2) ||
+                    (receivedMessage.sender === user2 && receivedMessage.receiver === patientData.email)
                 ) {
                     setMessages(prevMessages => [...prevMessages, receivedMessage]);
                 }
             });
             setStompClient(client);
         });
-    
+
         // Clean up when the component is unmounted
         return () => {
             if (client) {
                 client.disconnect();
             }
         };
-    }, [patientData.email, receiver]);
-    
+    }, [patientData.email, user2]);
 
     // Handle sending messages
     const sendMessage = () => {
         if (stompClient && inputMessage.trim() && patientData.email) {
             const message = {
                 sender: patientData.email,
-                receiver,
+                receiver: user2,
                 content: inputMessage,
                 timestamp: new Date().toISOString(),
             };
@@ -82,8 +80,8 @@ const Chat = () => {
     };
 
     return (
-        <div className="chat-dashboard-container">
-            <PatientDashboard />
+
+            
             <div className="chat-main">
                 <div className="chat-container">
                     {messages.map((msg, index) => (
@@ -106,7 +104,7 @@ const Chat = () => {
                     <button onClick={sendMessage}>Send</button>
                 </div>
             </div>
-        </div>
+        
     );
 };
 

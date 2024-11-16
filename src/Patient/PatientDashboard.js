@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './PatientDashboard.css';
 import { Link } from 'react-router-dom';
-import logo from '../images/Life1.png';
+
 import PatientMain from './PatientMain';
 
 const PatientDashboard = () => {
@@ -45,26 +45,23 @@ const PatientDashboard = () => {
     return (
         <div>
             <PatientMain />
-            <div className="dashboard-container" style={{ marginTop: '60px' }}> 
-                <div className="sidebar">
-                    <div className="logo-container">
-                        <img src={logo} alt="Hospital Logo" className="hospital-logo" />
-                    </div>
+            <div className="custom-dashboard-container">
+                <div className="custom-sidebar">
+                    
                     {profileImage && (
-                        <div className="profile-image-container">
-                            <img src={profileImage} alt="Profile" className="profile-image" />
+                        <div className="custom-profile-image-container">
+                            <img src={profileImage} alt="Profile" className="custom-profile-image" />
                         </div>
                     )}
-                    <div className="navbar-center">
-                        <Link className="navbar-item" to="/patientHomepage">Dashboard</Link>
-                        <Link className="navbar-item" to="/bookAppointments">Book Appointment</Link>
-                        <Link className="navbar-item" to="/billing">Billing</Link>
-                        <Link className="navbar-item" to="/reports">Reports</Link>
-                        <Link className="navbar-item" to="/support">Support</Link>
-                        <Link className="navbar-item" to="/patientprofile">My Profile</Link>
-                        <Link className="navbar-item" to="/chatpatient">Chat</Link>
-                        
-                        <a className="navbar-item" href="#" onClick={handleLogout}>Logout</a> 
+                    <div className="custom-navbar-center">
+                        <Link className="custom-navbar-item" to="/patientHomepage">Dashboard</Link>
+                        <Link className="custom-navbar-item" to="/bookAppointments">Book Appointment</Link>
+                        <Link className="custom-navbar-item" to="/myAppointments">MyAppointment</Link>
+                        <Link className="custom-navbar-item" to="/billing">Billing</Link>
+                        <Link className="custom-navbar-item" to="/reports">Reports</Link>
+                        <Link className="custom-navbar-item" to="/support">Support</Link>
+                        <Link className="custom-navbar-item" to="/patientprofile">My Profile</Link>   
+                        <a className="custom-navbar-item" href="#" onClick={handleLogout}>Logout</a> 
                     </div>
                 </div>
             </div>

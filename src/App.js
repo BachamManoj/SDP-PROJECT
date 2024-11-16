@@ -22,6 +22,10 @@ import PatientHomePage from './Patient/PatientHomePage';
 import AppointmentPatient from './Patient/Appointment';
 import DoctorDashboard from'./Doctor/DoctorDashboard';
 import DoctorChat from './Doctor/DoctorChat';
+import PayDoctorFee from './Patient/PayDoctorFee';
+import MyAppointments from './Patient/MyAppointment';
+import MyPatients from './Doctor/MyPatients';
+
 
 function App() {
   return (
@@ -48,6 +52,10 @@ function App() {
           <Route exact path='/doctorDashboard' element={<DoctorDashboard /> } />
           <Route exact path='/doctorchat' element={<DoctorChat /> } />
           <Route exact path='/doctorHomepage' element={<DoctorHomePage /> } />
+          <Route exact path='/billing' element={<PayDoctorFee /> } />
+          <Route exact path='/myAppointments' element={<MyAppointments /> } />
+          <Route exact path='/mySchedule' element={<MyPatients /> } />
+          
           
         </Routes>
       </Router>

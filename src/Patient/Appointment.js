@@ -1,51 +1,49 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-datepicker/dist/react-datepicker.css';
+import ReactDatePicker from 'react-datepicker';
 import PatientDashboard from './PatientDashboard';
 import './Appointment.css';
 
 const Appointment = () => {
+    const navigate = useNavigate();
     const [doctors, setDoctors] = useState([]);
     const [speciality, setSpeciality] = useState("");
     const [patient, setPatient] = useState({});
     const [selectedDoctor, setSelectedDoctor] = useState(null);
-    const [selectedDate, setSelectedDate] = useState("");
+    const [selectedDate, setSelectedDate] = useState(null);
     const [selectedTime, setSelectedTime] = useState("");
     const [availableSlots, setAvailableSlots] = useState([]);
+    const [generatedSlots, setGeneratedSlots] = useState([]);
+    const [bookedDates, setBookedDates] = useState([]);
 
     useEffect(() => {
-        const fetchPatientDetails = async () => {
+        const initializeData = async () => {
             try {
-                const res = await axios.get('http://localhost:9999/getPatientDetails', { withCredentials: true });
-                setPatient(res.data);
+                const patientResponse = await axios.get('http://localhost:9999/getPatientDetails', { withCredentials: true });
+                setPatient(patientResponse.data);
+
+                const bookedDatesResponse = await axios.get(
+                    `http://localhost:9999/getAlreadybookedDates/${patientResponse.data.id}`
+                );
+                const formattedDates = bookedDatesResponse.data.map(date => new Date(date).toLocaleDateString('en-CA'));
+                setBookedDates(formattedDates);
+
+                generateTimeSlots();
             } catch (error) {
-                console.error("Error fetching patient details:", error);
+                console.error("Error initializing data:", error);
+                displaySessionExpiredMessage();
             }
         };
 
-        fetchPatientDetails();
-        generateTimeSlots();
+        initializeData();
     }, []);
 
-    useEffect(() => {
-        if (speciality) {
-            fetchDoctorsBySpecialty();
-        }
-    }, [speciality]);
-
-    const fetchDoctorsBySpecialty = async () => {
-        try {
-            const res = await axios.post('http://localhost:9999/getbyspecialty', speciality, {
-                headers: {
-                    'Content-Type': 'text/plain'
-                }
-            });
-            setDoctors(res.data);
-            setSelectedDoctor(null);
-        } catch (error) {
-            console.error("Error fetching doctor details:", error);
-            setDoctors([]);
-        }
+    const displaySessionExpiredMessage = () => {
+        alert("Your session has expired. Please log in again.");
+        navigate('/login');
     };
 
     const generateTimeSlots = () => {
@@ -56,10 +54,60 @@ const Appointment = () => {
         end.setHours(17, 0, 0, 0);
 
         while (start < end) {
-            slots.push(new Date(start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }));
+            slots.push(
+                new Date(start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
+            );
             start.setMinutes(start.getMinutes() + 30);
         }
+        setGeneratedSlots(slots);
         setAvailableSlots(slots);
+    };
+
+    const fetchDoctorsBySpecialty = useCallback(async () => {
+        if (!speciality) return;
+
+        try {
+            const response = await axios.post(
+                'http://localhost:9999/getbyspecialty',
+                speciality,
+                { headers: { 'Content-Type': 'text/plain' } }
+            );
+            setDoctors(response.data);
+            setSelectedDoctor(null);
+        } catch (error) {
+            console.error("Error fetching doctor details:", error);
+            setDoctors([]);
+        }
+    }, [speciality]);
+
+    useEffect(() => {
+        fetchDoctorsBySpecialty();
+    }, [speciality, fetchDoctorsBySpecialty]);
+
+    const fetchBookedSlots = useCallback(async () => {
+        if (!selectedDoctor || !selectedDate) return;
+
+        try {
+            const formattedDate = selectedDate.toLocaleDateString('en-CA');
+            const response = await axios.get(
+                `http://localhost:9999/getDoctorFreeSlot/${selectedDoctor.id}/${formattedDate}`
+            );     
+            filterAvailableSlots(response.data);
+        } catch (error) {
+            console.error("Error fetching booked slots:", error);
+        }
+    }, [selectedDoctor, selectedDate]);
+
+    useEffect(() => {
+        fetchBookedSlots();
+    }, [selectedDoctor, selectedDate, fetchBookedSlots]);
+
+    const filterAvailableSlots = (booked) => {
+        const trimmedGeneratedSlots = generatedSlots.map(slot => slot.slice(0, 5));
+        const trimmedBookedSlots = booked.map(slot => slot.slice(0, 5));
+        const remainingSlots = trimmedGeneratedSlots.filter(slot => !trimmedBookedSlots.includes(slot));
+    
+        setAvailableSlots(remainingSlots);
     };
 
     const handleSpecialtyChange = (e) => {
@@ -72,6 +120,11 @@ const Appointment = () => {
         setSelectedDoctor(selected);
     };
 
+    const handleDateChange = (date) => {
+        setSelectedDate(date);
+        setSelectedTime("");
+    };
+
     const handleAppointmentSubmit = async () => {
         if (!selectedDoctor || !selectedDate || !selectedTime) {
             alert("Please select a date, doctor, and time slot.");
@@ -79,17 +132,16 @@ const Appointment = () => {
         }
 
         try {
+            const formattedDate = selectedDate.toLocaleDateString('en-CA');
             const appointmentData = {
                 patient: patient,
                 doctor: selectedDoctor,
-                date: selectedDate,
+                date: formattedDate,
                 timeSlot: selectedTime,
             };
 
-            const res = await axios.post('http://localhost:9999/makeAppointment', appointmentData);
-
-            alert(res.data || "Appointment successfully created!");
-
+            const response = await axios.post('http://localhost:9999/makeAppointment', appointmentData);
+            alert(response.data || "Appointment successfully created!");
         } catch (error) {
             console.error("Error creating appointment:", error);
             alert("Failed to create appointment.");
@@ -104,10 +156,13 @@ const Appointment = () => {
         { id: 5, name: "Orthopedics" },
     ];
 
-    const todayDate = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
+    const isDateDisabled = (date) => {
+        const formattedDate = date.toLocaleDateString('en-CA');
+        return bookedDates.includes(formattedDate);
+    };
 
     return (
-        <div className="appointment-container ">
+        <div className="appointment-container">
             <div className="appointment-sidebar">
                 <PatientDashboard />
             </div>
@@ -116,10 +171,10 @@ const Appointment = () => {
                 <div className="row">
                     <div className="col-md-6 mb-3">
                         <label htmlFor="specialty" className="form-label">Select Specialty:</label>
-                        <select 
-                            id="specialty" 
-                            className="form-select" 
-                            value={speciality} 
+                        <select
+                            id="specialty"
+                            className="form-select"
+                            value={speciality}
                             onChange={handleSpecialtyChange}
                         >
                             <option value="">Choose a specialty</option>
@@ -128,12 +183,12 @@ const Appointment = () => {
                             ))}
                         </select>
                     </div>
-                    
+
                     <div className="col-md-6 mb-3">
                         <label htmlFor="doctor" className="form-label">Select a Doctor:</label>
-                        <select 
-                            id="doctor" 
-                            className="form-select" 
+                        <select
+                            id="doctor"
+                            className="form-select"
                             onChange={handleDoctorChange}
                             disabled={doctors.length === 0}
                         >
@@ -148,34 +203,40 @@ const Appointment = () => {
                 <div className="row">
                     <div className="col-md-6 mb-3">
                         <label htmlFor="date" className="form-label">Select a Date:</label>
-                        <input 
-                            type="date" 
-                            id="date" 
+                        <ReactDatePicker
+                            id="date"
+                            selected={selectedDate}
+                            onChange={handleDateChange}
+                            minDate={new Date()}
+                            filterDate={(date) => !isDateDisabled(date)}
+                            dateFormat="yyyy-MM-dd"
                             className="form-control"
-                            min={todayDate}
-                            value={selectedDate}
-                            onChange={(e) => setSelectedDate(e.target.value)}
+                            wrapperClassName="w-100"
+                            popperClassName="custom-popper"
                         />
                     </div>
 
                     <div className="col-md-6 mb-3">
                         <label htmlFor="timeSlot" className="form-label">Select a Time Slot:</label>
-                        <select 
-                            id="timeSlot" 
-                            className="form-select" 
-                            value={selectedTime} 
+                        <select
+                            id="timeSlot"
+                            className="form-select"
+                            value={selectedTime}
                             onChange={(e) => setSelectedTime(e.target.value)}
+                            disabled={!selectedDate || availableSlots.length === 0}
                         >
                             <option value="">Choose a time slot</option>
                             {availableSlots.map((slot, index) => (
-                                <option key={index} value={slot}>{slot}</option>
+                                <option key={index} value={slot}>
+                                    {slot}
+                                </option>
                             ))}
                         </select>
                     </div>
                 </div>
 
-                <button 
-                    onClick={handleAppointmentSubmit} 
+                <button
+                    onClick={handleAppointmentSubmit}
                     className="btn btn-primary"
                     disabled={!selectedDate || !selectedTime || !selectedDoctor}
                 >

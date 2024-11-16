@@ -60,6 +60,7 @@ const DoctorDashboard = () => {
                     )}
                     <div className="custom-navbar-center">
                         <Link className="custom-navbar-item" to="/doctorHomepage">Dashboard</Link>
+                        <Link className="custom-navbar-item" to="/mySchedule">mySchedules</Link>
                         <Link className="custom-navbar-item" to="/appointments">Appointments</Link>
                         <Link className="custom-navbar-item" to="/patients">Patient Records</Link>
                         <Link className="custom-navbar-item" to="/doctorchat">Messages</Link>

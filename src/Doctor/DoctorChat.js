@@ -5,12 +5,11 @@ import axios from 'axios';
 import './DoctorChat.css';
 import DoctorDashboard from './DoctorDashboard';
 
-const DoctorChat = () => {
+const DoctorChat = ({ receiver }) => {  // receiver as a prop
     const [doctorData, setDoctorData] = useState({ email: '' });
     const [messages, setMessages] = useState([]);
     const [inputMessage, setInputMessage] = useState('');
     const [stompClient, setStompClient] = useState(null);
-    const receiver = 'manojbacham@gmail.com';  // The receiver's email
 
     // Fetch Doctor data and chat history
     const fetchDoctorData = async () => {
@@ -84,8 +83,7 @@ const DoctorChat = () => {
     };
 
     return (
-        <div className="chat-dashboard-container">
-            <DoctorDashboard />
+               
             <div className="chat-main">
                 <div className="chat-container">
                     {messages.map((msg, index) => (
@@ -108,7 +106,6 @@ const DoctorChat = () => {
                     <button onClick={sendMessage}>Send</button>
                 </div>
             </div>
-        </div>
     );
 };
 

@@ -1,24 +1,40 @@
-/* PatientMain.css */
+/* Container for the entire navbar */
 .navbar-container {
-    width: 100%; /* Full width */
-    background-color: #5a67d8; /* Attractive color */
-    position: fixed; /* Fix to the top */
-    top: 0; /* Align to the top */
-    left: 0; /* Align to the left */
-    z-index: 1000; /* Ensure it stays above other content */
-    height: 60px; /* Set a fixed height for the navbar */
+    width: 100%;
+    background-color: #5a67d8;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    height: 60px;
 }
 
+/* Flex container for logo and title */
 .navbar {
-    display: flex; /* Use flexbox for centering */
-    justify-content: center; /* Center the title */
-    align-items: center; /* Center vertically */
-    height: 100%; /* Full height of the container */
+    display: flex;
+    justify-content: space-between; /* Space between logo and title */
+    align-items: center;
+    height: 100%;
+    padding: 0 20px; /* Add some padding for spacing */
+}
+
+/* Logo container aligned to the left */
+.custom-logo-container {
+    display: flex;
+}
+
+/* Style for the logo image */
+.custom-hospital-logo {
+    width: 10px; /* Adjust as needed */
+    height: auto;
+   
+    border-radius: 15px;
 }
 
 .navbar-title {
-    color: white; /* Title color */
-    margin: 0; /* Remove default margin */
-    font-size: 24px; /* Font size for the title */
-    font-weight: bold; /* Bold font */
+    color: white;
+    margin: 0 auto; /* Centers the title in the remaining space */
+    font-size: 24px;
+    font-weight: bold;
 }
+
