@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import DoctorDashboard from './DoctorDashboard';  // Assuming you have a DoctorDashboard component for navigation
+import DoctorDashboard from './DoctorDashboard'; 
+import PrescriptionForm from './PrescriptionForm';
+import FetchEPrescriptions from './FetchEPrescriptions'; 
 import DoctorChat from './DoctorChat';
 
 const MyPatients = () => {
@@ -9,9 +11,11 @@ const MyPatients = () => {
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedPatientEmail, setSelectedPatientEmail] = useState(null); // State to track selected patient for chat
+  const [selectedPatient, setSelectedPatient] = useState(null); 
+  const [showPrescriptionForm, setShowPrescriptionForm] = useState(false);
+  const [showEPrescription, setShowEPrescription] = useState(null); 
+  const [selectedPatientEmail, setSelectedPatientEmail] = useState(null); 
 
-  // Fetch doctor details and then fetch patients' appointments using doctor's ID
   useEffect(() => {
     const fetchDoctorDetails = async () => {
       try {
@@ -21,16 +25,14 @@ const MyPatients = () => {
 
         if (doctorResponse.data) {
           setDoctor(doctorResponse.data);
-          const appointmentsResponse = await axios.get(`http://localhost:9999/getPatientAppointments/${doctorResponse.data.id}`);
-          if (appointmentsResponse.data) {
-            setPatients(appointmentsResponse.data);
-          } else {
-            setPatients([]);
-          }
+          const appointmentsResponse = await axios.get(
+            `http://localhost:9999/getPatientAppointments/${doctorResponse.data.id}`
+          );
+          setPatients(appointmentsResponse.data || []);
         }
       } catch (error) {
-        setError('Error fetching doctor details or patients\' appointments. Please try again later.');
-        console.error("Error fetching doctor details or appointments:", error);
+        setError('Error fetching doctor or patient data.');
+        console.error(error);
       } finally {
         setLoading(false);
       }
@@ -39,8 +41,24 @@ const MyPatients = () => {
     fetchDoctorDetails();
   }, []);
 
+  const handlePrescriptionClick = (patient) => {
+    if (patient?.id && patient.patient?.id && doctor?.id) {
+      const prescriptionDetails = {
+        appointmentId: patient.id,
+        patientId: patient.patient.id,
+        doctorId: doctor.id,
+        patientEmail: patient.patient.email, 
+      };
+      setSelectedPatient(prescriptionDetails);
+      setShowPrescriptionForm(true);
+    } else {
+      console.error('Missing required data for prescription.');
+      alert('Unable to provide prescription. Required details are missing.');
+    }
+  };
+
   const handleChatClick = (email) => {
-    setSelectedPatientEmail(email);  // Set selected patient email for chat
+    setSelectedPatientEmail(email);
   };
 
   return (
@@ -72,25 +90,57 @@ const MyPatients = () => {
                   <th>Appointment Date</th>
                   <th>Time Slot</th>
                   <th>Virtual Appointment</th>
-                  <th>Post Queries</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {patients.map((patient, index) => (
-                  <tr key={index}>
-                    <td>{patient.patient.firstName}</td>
-                    <td>{new Date(patient.date).toLocaleDateString('en-CA')}</td>
-                    <td>{patient.timeSlot}</td>
-                    <td>No</td>
-                    <td>
-                      <button
-                        className="btn btn-link ml-2"
-                        onClick={() => handleChatClick(patient.patient.email)}  // When button clicked, set the selected patient email
-                      >
-                        Chat
-                      </button>
-                    </td>
-                  </tr>
+                  <React.Fragment key={index}>
+                    <tr>
+                      <td>{patient.patient.firstName}</td>
+                      <td>{new Date(patient.date).toLocaleDateString('en-CA')}</td>
+                      <td>{patient.timeSlot}</td>
+                      <td>{patient.isCompleted ? 'Yes' : 'No'}</td>
+                      <td>
+                        {patient.isCompleted ? (
+                          <button
+                            className="btn btn-primary me-2"
+                            onClick={() => handlePrescriptionClick(patient)}
+                          >
+                            Provide Prescription
+                          </button>
+                        ) : (
+                          <span className="text-warning">
+                            This will enable after completion of virtual consultation.
+                          </span>
+                        )}
+                          {patient.isCompleted ?( <button
+                              className="btn btn-secondary"
+                              onClick={() =>
+                                setShowEPrescription(
+                                  showEPrescription === patient.id ? null : patient.id
+                                )
+                              }
+                            >
+                              {showEPrescription === patient.id ? 'Hide' : 'Show'}
+                            </button>):(<p></p>)
+                          }
+                        <button
+                          className="btn btn-link"
+                          onClick={() => handleChatClick(patient.patient.email)}
+                        >
+                          Chat
+                        </button>
+                      </td>
+                    </tr>
+                    {showEPrescription === patient.id && (
+                      <tr>
+                        <td colSpan="5">
+                          <FetchEPrescriptions appointmentId={patient.id} />
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
                 ))}
               </tbody>
             </table>
@@ -98,13 +148,28 @@ const MyPatients = () => {
         )}
       </div>
 
-      {/* Render DoctorChat component on the right side, filling the full height */}
-      {selectedPatientEmail && (
-  <div style={{ flex: 0.55, minHeight: '100vh', padding: '20px', display: 'flex', flexDirection: 'column' }}>
-    <DoctorChat receiver={selectedPatientEmail} />
-  </div>
-)}
+      {showPrescriptionForm && selectedPatient && (
+        <div className="prescription-modal">
+          <PrescriptionForm
+            selectedPatient={selectedPatient}
+            onClose={() => setShowPrescriptionForm(false)}
+          />
+        </div>
+      )}
 
+      {selectedPatientEmail && (
+        <div
+          style={{
+            flex: 0.55,
+            minHeight: '100vh',
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          <DoctorChat receiver={selectedPatientEmail} />
+        </div>
+      )}
     </div>
   );
 };

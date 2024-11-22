@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Document, Page } from 'react-pdf';
 import { pdfjs } from 'react-pdf';
 
-// Use a local copy of pdf.worker.min.js
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
 
 const MedicalReports = async (patientId) => {
@@ -19,7 +18,7 @@ const MedicalReports = async (patientId) => {
     }
 
     const pdfBlob = await response.blob();
-    return URL.createObjectURL(pdfBlob); // Returns a URL for the blob
+    return URL.createObjectURL(pdfBlob); 
   } catch (error) {
     throw new Error(error.message);
   }

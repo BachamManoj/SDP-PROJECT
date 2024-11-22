@@ -3,7 +3,7 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
 import PatientDashboard from './PatientDashboard';
-import './PatientProfile.css'; // Ensure this file exists for custom styles
+import './PatientProfile.css';
 
 const PatientProfile = () => {
     const [patientData, setPatientData] = useState({
@@ -133,7 +133,7 @@ const PatientProfile = () => {
                             )}
                         </div>
 
-                        {/* Profile Update Form */}
+                       
                         <form onSubmit={handleUpdate}>
                             <div className="row">
                                 <div className="col-md-6">

@@ -10,7 +10,6 @@ const DoctorHomePage = () => {
   useEffect(() => {
     const fetchDoctorAndAppointments = async () => {
       try {
-        // Fetch doctor details
         const doctorResponse = await axios.get('http://localhost:9999/getDoctorDetails', { withCredentials: true });
         
         if (doctorResponse.data) {
@@ -18,8 +17,7 @@ const DoctorHomePage = () => {
           const appointmentsResponse = await axios.get(`http://localhost:9999/getPatientAppointments/${doctorResponse.data.id}`);
           
           if (appointmentsResponse.data) {
-            // Map over appointments and include patient details
-            const appointmentsWithPatientInfo = appointmentsResponse.data.map((appointment) => {
+           const appointmentsWithPatientInfo = appointmentsResponse.data.map((appointment) => {
               return {
                 ...appointment,
                 patientId: appointment.patient?.id || 'Unknown',

@@ -31,8 +31,6 @@
     font-size: 0.9rem;
     position: relative;
 }
-
-/* Style for sent messages (aligned to the right) */
 .message-bubble.sent {
     align-self: flex-end;
     background-color: #dcf8c6;
@@ -40,7 +38,6 @@
     border-top-right-radius: 0;
 }
 
-/* Style for received messages (aligned to the left) */
 .message-bubble.received {
     align-self: flex-start;
     background-color: #ffffff;
@@ -48,7 +45,6 @@
     border-top-left-radius: 0;
 }
 
-/* Timestamp styling */
 .message-timestamp {
     font-size: 0.75rem;
     color: #888;
@@ -56,7 +52,6 @@
     text-align: right;
 }
 
-/* Input container for sending messages */
 .input-container {
     display: flex;
     align-items: center;

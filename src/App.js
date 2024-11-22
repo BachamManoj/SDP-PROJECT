@@ -25,6 +25,15 @@ import DoctorChat from './Doctor/DoctorChat';
 import PayDoctorFee from './Patient/PayDoctorFee';
 import MyAppointments from './Patient/MyAppointment';
 import MyPatients from './Doctor/MyPatients';
+import PharmacistLoginPage from './Pharmacist/PharmacistLoginPage';
+import PharmacistDashboard from './Pharmacist/PharmacistDashboard';
+import MedicineAdd from './Pharmacist/MedicineAdd';
+import MedicineList from './Pharmacist/MedicineList';
+import FetchEPrescriptions from './Doctor/FetchEPrescriptions';
+import MyEPrescription from './Patient/MyEPrescription';
+import PostReport from './Doctor/PostReport';
+import PatientRecords from './Doctor/PatientRecords';
+import PatientReport from './Patient/PatientReport';
 
 
 function App() {
@@ -55,8 +64,14 @@ function App() {
           <Route exact path='/billing' element={<PayDoctorFee /> } />
           <Route exact path='/myAppointments' element={<MyAppointments /> } />
           <Route exact path='/mySchedule' element={<MyPatients /> } />
-          
-          
+          <Route exact path='/pharmacistlogin' element={<PharmacistLoginPage /> } />
+          <Route exact path='/pharmacistDashboard' element={<PharmacistDashboard /> } />
+          <Route exact path='/pharmacistAddMedicine' element={<MedicineAdd /> } />
+          <Route exact path='/pharmacistMedicineList' element={<MedicineList /> } />
+          <Route exact path='/MyEPrescription' element={<MyEPrescription /> } />
+          <Route exact path='/postReportsData' element={<PostReport /> } />
+          <Route exact path='/patientRecordsbyDocter' element={<PatientRecords/>} />
+          <Route exact path='/patientRecordsbyPatient' element={<PatientReport/>} />
         </Routes>
       </Router>
     </div>

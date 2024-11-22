@@ -9,19 +9,20 @@ const MyAppointments = () => {
   const [patientId, setPatientId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedDoctorEmail, setSelectedDoctorEmail] = useState(null); // Track the selected doctor's email for chat
+  const [selectedDoctorEmail, setSelectedDoctorEmail] = useState(null); 
+  const [ratings, setRatings] = useState({}); 
+  const [ratingDescriptions, setRatingDescriptions] = useState({}); 
 
-  // Fetch patient details and then fetch appointments using patientId
   useEffect(() => {
     const fetchPatientDetails = async () => {
       try {
         const res = await axios.get('http://localhost:9999/getPatientDetails', {
           withCredentials: true,
         });
-        setPatientId(res.data.id); // Assuming the patient details contain an 'id' field
+        setPatientId(res.data.id);
       } catch (error) {
         setError('Error fetching patient details. Please try again later.');
-        console.error("Error fetching patient details:", error);
+        console.error('Error fetching patient details:', error);
       }
     };
 
@@ -34,15 +35,13 @@ const MyAppointments = () => {
         setLoading(true);
         setError(null);
         try {
-          const response = await axios.get(`http://localhost:9999/getappointments/${patientId}`);
-          if (response.data) {
-            setAppointments(response.data);
-          } else {
-            setAppointments([]);
-          }
+          const response = await axios.get(
+            `http://localhost:9999/getappointments/${patientId}`
+          );
+          setAppointments(response.data || []);
         } catch (error) {
           setError('Error fetching appointments. Please try again later.');
-          console.error("Error fetching appointments:", error);
+          console.error('Error fetching appointments:', error);
         } finally {
           setLoading(false);
         }
@@ -53,7 +52,37 @@ const MyAppointments = () => {
   }, [patientId]);
 
   const handleChatOpen = (doctorEmail) => {
-    setSelectedDoctorEmail(doctorEmail); // Set the selected doctor's email
+    setSelectedDoctorEmail(doctorEmail);
+  };
+
+  const handleRatingSubmit = async (appointmentId) => {
+    try {
+      const rating = ratings[appointmentId];
+      const ratingDescription = ratingDescriptions[appointmentId];
+
+      if (!rating || rating < 1 || rating > 5) {
+        alert('Please provide a valid rating between 1 and 5.');
+        return;
+      }
+      if (!ratingDescription) {
+        alert('Please provide a description for your rating.');
+        return;
+      }
+
+      await axios.put(
+        `http://localhost:9999/ratebyPatient/${appointmentId}`,
+        {
+          rating: parseInt(rating, 10),
+          ratingDescription: ratingDescription.trim(),
+        },
+        { withCredentials: true }
+      );
+
+      alert('Rating submitted successfully!');
+    } catch (error) {
+      console.error('Error submitting rating:', error);
+      alert(error.response?.data || 'Error submitting rating');
+    }
   };
 
   return (
@@ -86,28 +115,72 @@ const MyAppointments = () => {
                   <th>Time Slot</th>
                   <th>Virtual Appointment</th>
                   <th>Post Queries</th>
+                  <th>Status</th>
+                  <th>Rating</th>
                 </tr>
               </thead>
               <tbody>
                 {appointments.map((appointment, index) => (
                   <tr key={index}>
                     <td>{appointment.doctor.name}</td>
-                    <td>{new Date(appointment.date).toLocaleDateString('en-GB')}</td>
+                    <td>
+                      {new Date(appointment.date).toLocaleDateString('en-GB')}
+                    </td>
                     <td>{appointment.timeSlot}</td>
                     <td>
-                      {appointment.isVirtual ? (
-                        <span className="badge badge-success">Yes</span>
+                      {appointment.isCompleted ? (
+                        <span className="badge bg-success">Yes</span>
                       ) : (
-                        <span className="badge badge-danger">No</span>
+                        <span className="badge bg-danger">No</span>
                       )}
                     </td>
                     <td>
-                     <button
-                                className="btn btn-link ml-2"
-                                onClick={() => handleChatOpen(appointment.doctor.email)}
-                              >
-                                Chat with Doctor
-                              </button>
+                      <button
+                        className="btn btn-link ml-2"
+                        onClick={() => handleChatOpen(appointment.doctor.email)}
+                      >
+                        Chat with Doctor
+                      </button>
+                    </td>
+                    <td>{appointment.status}</td>
+                    <td>
+                      {appointment.isCompleted && !appointment.rating ? (
+                        <div>
+                          <input
+                            type="number"
+                            value={ratings[appointment.id] || ''}
+                            onChange={(e) =>
+                              setRatings({
+                                ...ratings,
+                                [appointment.id]: e.target.value,
+                              })
+                            }
+                            min="1"
+                            max="5"
+                            placeholder="Rate (1-5)"
+                            className="form-control"
+                          />
+                          <textarea
+                            value={ratingDescriptions[appointment.id] || ''}
+                            onChange={(e) =>
+                              setRatingDescriptions({
+                                ...ratingDescriptions,
+                                [appointment.id]: e.target.value,
+                              })
+                            }
+                            placeholder="Describe your rating"
+                            className="form-control mt-2"
+                          />
+                          <button
+                            className="btn btn-primary mt-2"
+                            onClick={() => handleRatingSubmit(appointment.id)}
+                          >
+                            Submit Rating
+                          </button>
+                        </div>
+                      ) : (
+                        <span>{appointment.rating || 'Not Rated'}</span>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -116,8 +189,6 @@ const MyAppointments = () => {
           </div>
         )}
       </div>
-
-      {/* Render Chat component if a doctor is selected */}
       {selectedDoctorEmail && <Chat user2={selectedDoctorEmail} />}
     </div>
   );

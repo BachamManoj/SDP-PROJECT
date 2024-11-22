@@ -33,7 +33,7 @@ const Logins = () => {
             <div className="p-4 bg-info text-white rounded shadow h-100">
               <h2>Pharmacist</h2>
               <p>Login to manage prescriptions</p>
-              <Link to="/pharmacist-login">
+              <Link to="/pharmacistlogin">
                 <button className="btn btn-primary w-100 mt-3">Pharmacist Login</button>
               </Link>
             </div>

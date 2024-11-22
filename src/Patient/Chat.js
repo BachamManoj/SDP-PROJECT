@@ -11,7 +11,6 @@ const Chat = ({ user2 }) => {
     const [inputMessage, setInputMessage] = useState('');
     const [stompClient, setStompClient] = useState(null);
 
-    // Fetch Patient data and chat history
     const fetchPatientData = async () => {
         try {
             const res = await axios.get('http://localhost:9999/getPatientDetails', { withCredentials: true });
@@ -27,18 +26,13 @@ const Chat = ({ user2 }) => {
         }
     };
 
-    // Fetch patient data and chat history on initial load and every 10 seconds
     useEffect(() => {
-        fetchPatientData(); // Initial fetch
+        fetchPatientData(); 
 
-        // Set interval to refresh chat history every 10 seconds
         const intervalId = setInterval(fetchPatientData, 10000);
 
-        // Cleanup interval on component unmount
         return () => clearInterval(intervalId);
-    }, [user2]); // Update when user2 changes
-
-    // Establish WebSocket connection for real-time messaging
+    }, [user2]);
     useEffect(() => {
         const socket = new SockJS('http://localhost:9999/ws');
         const client = Stomp.over(socket);
@@ -56,7 +50,6 @@ const Chat = ({ user2 }) => {
             setStompClient(client);
         });
 
-        // Clean up when the component is unmounted
         return () => {
             if (client) {
                 client.disconnect();
@@ -64,7 +57,6 @@ const Chat = ({ user2 }) => {
         };
     }, [patientData.email, user2]);
 
-    // Handle sending messages
     const sendMessage = () => {
         if (stompClient && inputMessage.trim() && patientData.email) {
             const message = {
