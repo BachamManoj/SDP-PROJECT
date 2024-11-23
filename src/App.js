@@ -39,6 +39,9 @@ import Feedback from './Doctor/Feedback';
 import UpdateDoctor from './Doctor/UpdateDoctor';
 import ViewPayments from './Pharmacist/ViewPayments';
 import ViewOrders from './Pharmacist/ViewOrders';
+import TrackOrder from './Pharmacist/TrackOrder';
+import PharmacistHomePage from './Pharmacist/PharmacistHomePage';
+import MyOrders from './Patient/MyOrders';
 
 
 function App() {
@@ -82,6 +85,10 @@ function App() {
           <Route exact path='/updateDoctorProfile' element={<UpdateDoctor/>} />
           <Route exact path='/viewPaymentsByEPharmacist' element={<ViewPayments/>} />
           <Route exact path='/viewOrdersbyPharmasisct' element={<ViewOrders/>} />
+          <Route exact path='/trackOrder' element={<TrackOrder/>} />
+          <Route exact path='/pharmacistHomePage' element={<PharmacistHomePage/>} />
+          <Route exact path='/myOrdersByPatient' element={<MyOrders/>} />
+          
         </Routes>
       </Router>
     </div>

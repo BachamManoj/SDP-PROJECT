@@ -35,11 +35,12 @@ const PharmacistDashboard = () => {
             <img src={logo} alt="Hospital Logo" className="custom-hospital-logo" />
           </div>
           <div className="custom-navbar-center">
-            <Link className="custom-navbar-item" to="/doctorHomepage">Home</Link>
-            <Link className="custom-navbar-item" to="/viewPaymentsByEPharmacist">Accepted Orders</Link>
+            <Link className="custom-navbar-item" to="/pharmacistHomePage">Home</Link>
+            <Link className="custom-navbar-item" to="/trackOrder">Accepted Orders</Link>
             <Link className="custom-navbar-item" to="/viewOrdersbyPharmasisct">New Orders</Link>
-            <Link className="custom-navbar-item" to="/pharmacistMedicineList">Store</Link>
-            <Link className="custom-navbar-item" to="/medicalRecords">Pending Bills</Link>
+            <Link className="custom-navbar-item" to="/pharmacistMedicineList">Medicine List</Link>
+            <Link className="custom-navbar-item" to="/viewPaymentsByEPharmacist">E-Prescription Payments</Link>
+            <Link className="custom-navbar-item" to="/viewPaymentsByEPharmacist">Payments</Link>
             <Link className="custom-navbar-item" to="/support">Support</Link>
             <button
               className="custom-navbar-item custom-logout-button"

@@ -37,7 +37,7 @@ function PharmacistLoginPage() {
 
       const result = await response.text();
       if (result === 'Login successful!') {
-        navigate('/pharmacistDashboard ');
+        navigate('/pharmacistHomePage ');
       } else {
         setErrorMessage('Invalid email or password. Please try again.');
       }

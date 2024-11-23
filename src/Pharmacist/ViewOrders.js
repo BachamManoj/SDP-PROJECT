@@ -5,6 +5,8 @@ import PharmacistDashboard from './PharmacistDashboard';
 const ViewOrders = () => {
     const [orders, setOrders] = useState([]);
     const [orderPrices, setOrderPrices] = useState({});
+    const [ePrescriptions, setEPrescriptions] = useState([]);
+    const [selectedAppointment, setSelectedAppointment] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -13,28 +15,23 @@ const ViewOrders = () => {
             try {
                 const response = await fetch('http://localhost:9999/getAllOrders', { credentials: 'include' });
                 if (!response.ok) {
-                    if (response.status === 401) {
-                        throw new Error('Unauthorized access. Please log in as a pharmacist.');
-                    }
+                    if (response.status === 401) throw new Error('Unauthorized access. Please log in as a pharmacist.');
                     throw new Error('Failed to fetch orders.');
                 }
                 const data = await response.json();
-                const filteredOrders = data.filter(order => order.accept === false);
+                const filteredOrders = data.filter(order => !order.accept);
                 setOrders(filteredOrders);
 
                 const prices = {};
-                for (const order of filteredOrders) {
-                    const priceResponse = await fetch(
-                        `http://localhost:9999/getPriceOfOrder/${order.appointment.id}`,
-                        { credentials: 'include' }
-                    );
-                    if (priceResponse.ok) {
-                        const price = await priceResponse.json();
-                        prices[order.id] = price;
-                    } else {
-                        prices[order.id] = 'Error';
-                    }
-                }
+                await Promise.all(
+                    filteredOrders.map(async (order) => {
+                        const priceResponse = await fetch(
+                            `http://localhost:9999/getPriceOfOrder/${order.appointment.id}`,
+                            { credentials: 'include' }
+                        );
+                        prices[order.id] = priceResponse.ok ? await priceResponse.json() : 'Error';
+                    })
+                );
                 setOrderPrices(prices);
             } catch (error) {
                 setError(error.message);
@@ -42,35 +39,43 @@ const ViewOrders = () => {
                 setLoading(false);
             }
         };
-
         fetchOrders();
     }, []);
 
-    const acceptOrder = async (orderId) => {
+    const fetchEPrescriptions = async (appointmentId) => {
         try {
-            const response = await fetch(`http://localhost:9999/acceptOrder/${orderId}`, {
+            const response = await fetch(`http://localhost:9999/checkMedicinesAcceptOrder/${appointmentId}`, {
+                credentials: 'include',
+            });
+            if (!response.ok) throw new Error('Failed to fetch ePrescriptions.');
+            const data = await response.json();
+            setEPrescriptions(data);
+            setSelectedAppointment(appointmentId);
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
+    const confirmAcceptOrder = async (appointmentId) => {
+        try {
+            const response = await fetch(`http://localhost:9999/acceptOrder/${appointmentId}`, {
                 method: 'POST',
                 credentials: 'include',
             });
-            if (!response.ok) {
-                throw new Error('Failed to accept order.');
-            }
+            if (!response.ok) throw new Error('Failed to accept order.');
             setOrders(orders.map(order => 
-                order.id === orderId ? { ...order, accept: true } : order
+                order.appointment.id === appointmentId ? { ...order, accept: true } : order
             ));
+            setSelectedAppointment(null);
+            setEPrescriptions([]);
             alert('Order accepted successfully');
         } catch (error) {
             setError(error.message);
         }
     };
 
-    if (loading) {
-        return <div className="text-center"><div className="spinner-border text-primary" role="status"><span className="sr-only">Loading...</span></div></div>;
-    }
-
-    if (error) {
-        return <p className="text-danger text-center">{error}</p>;
-    }
+    if (loading) return <div className="text-center"><div className="spinner-border text-primary" role="status"></div></div>;
+    if (error) return <p className="text-danger text-center">{error}</p>;
 
     return (
         <div className="dashboard-container d-flex">
@@ -96,38 +101,68 @@ const ViewOrders = () => {
                                 </thead>
                                 <tbody>
                                     {orders.map((order) => (
-                                        <tr key={order.id}>
-                                            <td>{order.id}</td>
-                                            <td>{order.appointment.patient.firstName}</td>
-                                            <td>{order.address}</td>
-                                            <td>
-                                                {orderPrices[order.id] !== undefined
-                                                    ? orderPrices[order.id] === 'Error'
-                                                        ? 'Error fetching price'
-                                                        : `₹${orderPrices[order.id].toFixed(2)}`
-                                                    : 'Loading...'}
-                                            </td>
-                                            <td>{order.orderDate}</td>
-                                            <td>
-                                                <span
-                                                    className={`badge ${
-                                                        order.isPaid ? 'bg-success' : 'bg-warning'
-                                                    }`}
-                                                >
-                                                    {order.isPaid ? 'Paid' : 'Pending'}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                {!order.accept && (
-                                                    <button
-                                                        className="btn btn-success btn-sm"
-                                                        onClick={() => acceptOrder(order.id)}
-                                                    >
-                                                        <i className="bi bi-check2-circle"></i> Accept
-                                                    </button>
-                                                )}
-                                            </td>
-                                        </tr>
+                                        <React.Fragment key={order.id}>
+                                            <tr>
+                                                <td>{order.id}</td>
+                                                <td>{order.appointment.patient.firstName}</td>
+                                                <td>{order.address}</td>
+                                                <td>
+                                                    {orderPrices[order.id] !== undefined
+                                                        ? orderPrices[order.id] === 'Error'
+                                                            ? 'Error fetching price'
+                                                            : `₹${orderPrices[order.id].toFixed(2)}`
+                                                        : 'Loading...'}
+                                                </td>
+                                                <td>{order.orderDate}</td>
+                                                <td>
+                                                    <span className={`badge ${order.isPaid ? 'bg-success' : 'bg-warning'}`}>
+                                                        {order.isPaid ? 'Paid' : 'Pending'}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    {!order.accept && (
+                                                        <div>
+                                                            <button
+                                                                className="btn btn-info btn-sm mb-1"
+                                                                onClick={() => fetchEPrescriptions(order.appointment.id)}
+                                                            >
+                                                                View Medicines
+                                                            </button>
+                                                            {selectedAppointment === order.appointment.id && (
+                                                                <button
+                                                                    className="btn btn-success btn-sm"
+                                                                    onClick={() => confirmAcceptOrder(order.appointment.id)}
+                                                                >
+                                                                    Confirm Accept
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                            {selectedAppointment === order.appointment.id && ePrescriptions.length > 0 && (
+                                                <tr>
+                                                    <td colSpan="7">
+                                                        <div className="card shadow">
+                                                            <div className="card-header bg-primary text-white text-center">
+                                                                <strong>Medicine Details</strong>
+                                                            </div>
+                                                            <ul className="list-group list-group-flush">
+                                                                {ePrescriptions.map((medicine, index) => (
+                                                                    <li
+                                                                        key={index}
+                                                                        className="list-group-item d-flex justify-content-between align-items-center"
+                                                                    >
+                                                                        <span>{medicine.medicine.name}</span>
+                                                                        <span className="badge bg-secondary">{medicine.quantity}</span>
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </React.Fragment>
                                     ))}
                                 </tbody>
                             </table>
