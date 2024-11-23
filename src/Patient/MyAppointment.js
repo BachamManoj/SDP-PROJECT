@@ -9,9 +9,10 @@ const MyAppointments = () => {
   const [patientId, setPatientId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedDoctorEmail, setSelectedDoctorEmail] = useState(null); 
-  const [ratings, setRatings] = useState({}); 
-  const [ratingDescriptions, setRatingDescriptions] = useState({}); 
+  const [selectedDoctorEmail, setSelectedDoctorEmail] = useState(null);
+  const [ratings, setRatings] = useState({});
+  const [ratingDescriptions, setRatingDescriptions] = useState({});
+  const [currentlyRating, setCurrentlyRating] = useState(null);
 
   useEffect(() => {
     const fetchPatientDetails = async () => {
@@ -85,6 +86,35 @@ const MyAppointments = () => {
     }
   };
 
+  const handleStarRating = (appointmentId, star) => {
+    setRatings({
+      ...ratings,
+      [appointmentId]: star,
+    });
+  };
+
+  const handleDescriptionChange = (appointmentId, event) => {
+    setRatingDescriptions({
+      ...ratingDescriptions,
+      [appointmentId]: event.target.value,
+    });
+  };
+
+  const handleCancelAppointment = async (appointmentId) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:9999/cancleApointment/${appointmentId}`
+      );
+      alert(response.data);
+      setAppointments((prev) =>
+        prev.filter((appointment) => appointment.id !== appointmentId)
+      );
+    } catch (error) {
+      console.error('Error canceling appointment:', error);
+      alert('Failed to cancel appointment. Try again.');
+    }
+  };
+
   return (
     <div className="dashboard-container d-flex">
       <PatientDashboard />
@@ -116,6 +146,7 @@ const MyAppointments = () => {
                   <th>Virtual Appointment</th>
                   <th>Post Queries</th>
                   <th>Status</th>
+                  <th>Actions</th>
                   <th>Rating</th>
                 </tr>
               </thead>
@@ -144,39 +175,63 @@ const MyAppointments = () => {
                     </td>
                     <td>{appointment.status}</td>
                     <td>
+                      {appointment.isCompleted ? null : (
+                        <button
+                          className="btn btn-danger"
+                          onClick={() => handleCancelAppointment(appointment.id)}
+                        >
+                          Cancel Appointment
+                        </button>
+                      )}
+                    </td>
+                    <td>
                       {appointment.isCompleted && !appointment.rating ? (
                         <div>
-                          <input
-                            type="number"
-                            value={ratings[appointment.id] || ''}
-                            onChange={(e) =>
-                              setRatings({
-                                ...ratings,
-                                [appointment.id]: e.target.value,
-                              })
-                            }
-                            min="1"
-                            max="5"
-                            placeholder="Rate (1-5)"
-                            className="form-control"
-                          />
-                          <textarea
-                            value={ratingDescriptions[appointment.id] || ''}
-                            onChange={(e) =>
-                              setRatingDescriptions({
-                                ...ratingDescriptions,
-                                [appointment.id]: e.target.value,
-                              })
-                            }
-                            placeholder="Describe your rating"
-                            className="form-control mt-2"
-                          />
                           <button
-                            className="btn btn-primary mt-2"
-                            onClick={() => handleRatingSubmit(appointment.id)}
+                            className="btn btn-warning mb-2"
+                            onClick={() => setCurrentlyRating(appointment.id)}
                           >
-                            Submit Rating
+                            Rate
                           </button>
+                          {currentlyRating === appointment.id && (
+                            <div>
+                              <div className="star-rating mb-2">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <span
+                                    key={star}
+                                    onClick={() =>
+                                      handleStarRating(appointment.id, star)
+                                    }
+                                    style={{
+                                      cursor: 'pointer',
+                                      color:
+                                        ratings[appointment.id] >= star
+                                          ? 'gold'
+                                          : 'gray',
+                                    }}
+                                  >
+                                    &#9733;
+                                  </span>
+                                ))}
+                              </div>
+                              <textarea
+                                value={ratingDescriptions[appointment.id] || ''}
+                                onChange={(e) =>
+                                  handleDescriptionChange(appointment.id, e)
+                                }
+                                placeholder="Describe your rating"
+                                className="form-control mt-2"
+                              />
+                              <button
+                                className="btn btn-primary mt-2"
+                                onClick={() =>
+                                  handleRatingSubmit(appointment.id)
+                                }
+                              >
+                                Submit Rating
+                              </button>
+                            </div>
+                          )}
                         </div>
                       ) : (
                         <span>{appointment.rating || 'Not Rated'}</span>

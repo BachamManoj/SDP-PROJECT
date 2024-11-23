@@ -16,7 +16,7 @@ const DoctorDashboard = () => {
                 });
                 setDoctor(res.data);
 
-                const imageRes = await axios.get(`http://localhost:9999//${res.data.id}/image`, {
+                const imageRes = await axios.get(`http://localhost:9999/Doctorprofile/${res.data.id}/image`, {
                     responseType: 'blob',
                     withCredentials: true,
                 });
@@ -61,11 +61,12 @@ const DoctorDashboard = () => {
                     <div className="custom-navbar-center">
                         <Link className="custom-navbar-item" to="/doctorHomepage">Dashboard</Link>
                         <Link className="custom-navbar-item" to="/mySchedule">mySchedules</Link>
-                        <Link className="custom-navbar-item" to="/appointments">Appointments</Link>
+                        <Link className="custom-navbar-item" to="/viewMyPaymentsbyPatients">view Payments</Link>
                         <Link className="custom-navbar-item" to="/patientRecordsbyDocter">Patient Records</Link>
                         <Link className="custom-navbar-item" to="/postReportsData">Medical Records</Link>
+                        <Link className="custom-navbar-item" to="/feedback">My feedback</Link>
                         <Link className="custom-navbar-item" to="/support">Support</Link>
-                        <Link className="custom-navbar-item" to="/doctorprofile">My Profile</Link>
+                        <Link className="custom-navbar-item" to="/updateDoctorProfile">My Profile</Link>
                         <a className="custom-navbar-item" href="#" onClick={handleLogout}>Logout</a> 
                     </div>
                 </div>

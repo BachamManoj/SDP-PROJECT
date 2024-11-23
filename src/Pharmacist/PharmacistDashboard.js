@@ -36,8 +36,8 @@ const PharmacistDashboard = () => {
           </div>
           <div className="custom-navbar-center">
             <Link className="custom-navbar-item" to="/doctorHomepage">Home</Link>
-            <Link className="custom-navbar-item" to="/mySchedule">E-Prescriptions</Link>
-            <Link className="custom-navbar-item" to="/appointments">Track Orders</Link>
+            <Link className="custom-navbar-item" to="/viewPaymentsByEPharmacist">Accepted Orders</Link>
+            <Link className="custom-navbar-item" to="/viewOrdersbyPharmasisct">New Orders</Link>
             <Link className="custom-navbar-item" to="/pharmacistMedicineList">Store</Link>
             <Link className="custom-navbar-item" to="/medicalRecords">Pending Bills</Link>
             <Link className="custom-navbar-item" to="/support">Support</Link>

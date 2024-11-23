@@ -40,7 +40,7 @@ const PayDoctorFee = () => {
             setError('Please select a payment');
             return;
         }
-
+    
         setIsProcessing(true);
         try {
             const orderResponse = await fetch('http://localhost:9999/payments/createOrder', {
@@ -49,11 +49,11 @@ const PayDoctorFee = () => {
                 body: JSON.stringify(selectedPayment),
                 credentials: 'include',
             });
-
+    
             if (!orderResponse.ok) {
                 throw new Error('Failed to create payment order');
             }
-
+    
             const orderData = await orderResponse.json();
             const options = {
                 key: 'rzp_test_SBtB9sxEr3rXKz',
@@ -72,13 +72,14 @@ const PayDoctorFee = () => {
                         razorpayOrderId: response.razorpay_order_id,
                         razorpaySignature: response.razorpay_signature,
                     };
-
+    
                     try {
+                        // Fetch payment details from Razorpay
                         const paymentDetailsResponse = await fetch(`http://localhost:9999/payments/paymentDetails/${response.razorpay_payment_id}`, {
                             method: 'GET',
                             headers: { 'Authorization': `Bearer ${sessionStorage.getItem('auth_token')}` },
                         });
-
+    
                         if (paymentDetailsResponse.ok) {
                             const paymentDetails = await paymentDetailsResponse.json();
                             if (paymentDetails.card) {
@@ -91,28 +92,43 @@ const PayDoctorFee = () => {
                                 paymentData.paymentMethod = 'Net Banking';
                             }
                         }
-
+    
+                        // Update payment status in the backend
                         const confirmResponse = await fetch('http://localhost:9999/payments/payNow', {
                             method: 'PUT',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(paymentData),
                             credentials: 'include',
                         });
-
+    
                         if (!confirmResponse.ok) {
                             throw new Error('Payment confirmation failed');
                         }
-
+    
                         const updatedPayment = await confirmResponse.json();
                         setPayments(payments.map((p) => (p.id === updatedPayment.id ? updatedPayment : p)));
                         setEPrescriptionPayments(
                             ePrescriptionPayments.map((p) => (p.id === updatedPayment.id ? updatedPayment : p))
                         );
-                        setSelectedPayment(null);
+    
+                        // Confirm the order after successful payment
+                        const confirmOrderResponse = await fetch(`http://localhost:9999/confirmOrder/${selectedPayment.appointment.id}`, {
+                            method: 'POST',
+                            credentials: 'include',
+                        });
+    
+                        if (!confirmOrderResponse.ok) {
+                            throw new Error('Order confirmation failed');
+                        }
+    
+                        const confirmOrderMessage = await confirmOrderResponse.text();
+                        console.log(confirmOrderMessage); // Optionally display success message
+                        alert('Order confirmed successfully!');
                     } catch (error) {
                         setError(error.message);
                     } finally {
                         setIsProcessing(false);
+                        setSelectedPayment(null);
                     }
                 },
                 prefill: {
@@ -121,7 +137,7 @@ const PayDoctorFee = () => {
                 },
                 theme: { color: '#3399cc' },
             };
-
+    
             const razorpay = new window.Razorpay(options);
             razorpay.open();
         } catch (error) {
@@ -129,6 +145,7 @@ const PayDoctorFee = () => {
             setIsProcessing(false);
         }
     };
+    
 
     if (loading) {
         return <p>Loading payment details...</p>;

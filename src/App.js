@@ -34,6 +34,11 @@ import MyEPrescription from './Patient/MyEPrescription';
 import PostReport from './Doctor/PostReport';
 import PatientRecords from './Doctor/PatientRecords';
 import PatientReport from './Patient/PatientReport';
+import LookPayments from './Doctor/LookPayments';
+import Feedback from './Doctor/Feedback';
+import UpdateDoctor from './Doctor/UpdateDoctor';
+import ViewPayments from './Pharmacist/ViewPayments';
+import ViewOrders from './Pharmacist/ViewOrders';
 
 
 function App() {
@@ -72,6 +77,11 @@ function App() {
           <Route exact path='/postReportsData' element={<PostReport /> } />
           <Route exact path='/patientRecordsbyDocter' element={<PatientRecords/>} />
           <Route exact path='/patientRecordsbyPatient' element={<PatientReport/>} />
+          <Route exact path='/viewMyPaymentsbyPatients' element={<LookPayments/>} />
+          <Route exact path='/feedback' element={<Feedback/>} />
+          <Route exact path='/updateDoctorProfile' element={<UpdateDoctor/>} />
+          <Route exact path='/viewPaymentsByEPharmacist' element={<ViewPayments/>} />
+          <Route exact path='/viewOrdersbyPharmasisct' element={<ViewOrders/>} />
         </Routes>
       </Router>
     </div>

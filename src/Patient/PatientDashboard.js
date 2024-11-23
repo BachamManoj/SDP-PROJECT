@@ -46,7 +46,7 @@ const PatientDashboard = () => {
         <div>
             <PatientMain />
             <div className="custom-dashboard-container">
-                <div className="custom-sidebar">
+                <div className="custom-sidebar1" style={{backgroundColor:'#bef8fd'}}>
                     
                     {profileImage && (
                         <div className="custom-profile-image-container">

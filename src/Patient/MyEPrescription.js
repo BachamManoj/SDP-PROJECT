@@ -1,29 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import PatientDashboard from './PatientDashboard';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import PatientDashboard from "./PatientDashboard";
 
 const MyEPrescription = () => {
   const [ePrescriptions, setEPrescriptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [patientId, setPatientId] = useState(null);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
+  const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [showAddressInput, setShowAddressInput] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPatientDetails = async () => {
       try {
-        const response = await axios.get('http://localhost:9999/getPatientDetails', {
-          withCredentials: true,
-        });
-
+        const response = await axios.get(
+          "http://localhost:9999/getPatientDetails",
+          { withCredentials: true }
+        );
         if (response.data && response.data.id) {
           setPatientId(response.data.id);
         } else {
-          setError('Patient details not found.');
+          setError("Patient details not found.");
         }
       } catch (error) {
-        setError('Error fetching patient details.');
+        setError("Error fetching patient details.");
         console.error(error);
       }
     };
@@ -35,15 +38,15 @@ const MyEPrescription = () => {
     if (patientId) {
       const fetchEPrescriptions = async () => {
         try {
-          const response = await axios.get(`http://localhost:9999/viewMyEPrescriptionByPatient/${patientId}`, {
-            withCredentials: true,
-          });
-
+          const response = await axios.get(
+            `http://localhost:9999/viewMyEPrescriptionByPatient/${patientId}`,
+            { withCredentials: true }
+          );
           if (response.data) {
             setEPrescriptions(response.data);
           }
         } catch (error) {
-          setError('Error fetching ePrescriptions.');
+          setError("Error fetching ePrescriptions.");
           console.error(error);
         } finally {
           setLoading(false);
@@ -54,19 +57,39 @@ const MyEPrescription = () => {
     }
   }, [patientId]);
 
-  const handleAcceptAndPay = async (appointmentId) => {
+  const handleAcceptAndPay = async () => {
+    if (!deliveryAddress) {
+      alert("Delivery address is required.");
+      return;
+    }
+
     try {
-      const response = await axios.get(`http://localhost:9999/acceptandgetEPrescriptionPrice/${appointmentId}`, {
+      const orderData = {
+        appointment: { id: selectedAppointmentId },
+        address: deliveryAddress,
+      };
+
+      await axios.post("http://localhost:9999/create", orderData, {
         withCredentials: true,
       });
 
+      const response = await axios.get(
+        `http://localhost:9999/acceptandgetEPrescriptionPrice/${selectedAppointmentId}`,
+        { withCredentials: true }
+      );
+
       if (response.data) {
         const paymentAmount = response.data;
-        navigate(`/billing`, { state: { appointmentId, paymentAmount } });
+        navigate(`/billing`, {
+          state: { appointmentId: selectedAppointmentId, paymentAmount },
+        });
       }
     } catch (error) {
-      setError('Error processing payment.');
+      setError("Error processing payment.");
       console.error(error);
+    } finally {
+      setShowAddressInput(false);
+      setDeliveryAddress("");
     }
   };
 
@@ -94,6 +117,27 @@ const MyEPrescription = () => {
       return (
         <div key={appointmentId} className="ePrescription-group mb-4">
           <h4>Appointment ID: {appointmentId}</h4>
+          {showAddressInput && selectedAppointmentId === appointmentId && (
+            <div className="address-input mt-3">
+              <h5>Enter Delivery Address</h5>
+              <input
+                type="text"
+                className="form-control my-3"
+                placeholder="Delivery Address"
+                value={deliveryAddress}
+                onChange={(e) => setDeliveryAddress(e.target.value)}
+              />
+              <button className="btn btn-primary" onClick={handleAcceptAndPay}>
+                Submit and Pay
+              </button>
+              <button
+                className="btn btn-secondary ms-2"
+                onClick={() => setShowAddressInput(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          )}
           <table className="table table-striped">
             <thead>
               <tr>
@@ -105,15 +149,21 @@ const MyEPrescription = () => {
               </tr>
             </thead>
             <tbody>
-              {groupedByAppointment[appointmentId].map((ePrescription, index) => (
-                <tr key={index}>
-                  <td>{ePrescription.medicineName}</td>
-                  <td>{ePrescription.doctor.name}</td>
-                  <td>{ePrescription.quantity}</td>
-                  <td>{ePrescription.description}</td>
-                  <td>{new Date(ePrescription.appointment.date).toLocaleDateString()}</td>
-                </tr>
-              ))}
+              {groupedByAppointment[appointmentId].map(
+                (ePrescription, index) => (
+                  <tr key={index}>
+                    <td>{ePrescription.medicineName}</td>
+                    <td>{ePrescription.doctor.name}</td>
+                    <td>{ePrescription.quantity}</td>
+                    <td>{ePrescription.description}</td>
+                    <td>
+                      {new Date(
+                        ePrescription.appointment.date
+                      ).toLocaleDateString()}
+                    </td>
+                  </tr>
+                )
+              )}
             </tbody>
           </table>
 
@@ -122,7 +172,10 @@ const MyEPrescription = () => {
               {allNotAccepted ? (
                 <button
                   className="btn btn-success"
-                  onClick={() => handleAcceptAndPay(appointmentId)}
+                  onClick={() => {
+                    setSelectedAppointmentId(appointmentId);
+                    setShowAddressInput(true);
+                  }}
                 >
                   Accept and Pay
                 </button>
